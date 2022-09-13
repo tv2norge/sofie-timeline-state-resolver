@@ -227,6 +227,10 @@ export class Conductor extends EventEmitter<ConductorEvents> {
 			}
 		)
 
+		ThreadedClassManager.onEvent(this._resolver, 'error', (e) => {
+			this.emit('error', 'Error emitted from AsyncResolver: ', e)
+		})
+
 		this._isInitialized = true
 		this.resetResolver()
 	}
@@ -575,6 +579,10 @@ export class Conductor extends EventEmitter<ConductorEvents> {
 			}
 
 			newDevice.device.on('resetResolver', () => this.resetResolver()).catch(console.error)
+
+			ThreadedClassManager.onEvent(newDevice.device, 'error', (e) => {
+				this.emit('error', `Error emitted from device ${newDevice?.deviceName}: `, e)
+			})
 
 			// Double check that it hasnt been created while we were busy waiting
 			if (this.devices.has(deviceId)) {
