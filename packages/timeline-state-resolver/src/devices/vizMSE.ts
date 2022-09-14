@@ -825,6 +825,8 @@ export class VizMSEDevice extends DeviceWithState<VizMSEState, DeviceOptionsVizM
 				throw new Error(`Not initialized yet`)
 			}
 		} catch (e) {
+			this.emit('debug', `_defaultCommandReceiver catch ${e} stack: ${typeof e === 'object' && (e as any).stack}`)
+
 			const error = e as Error
 			let errorString = error && error.message ? error.message : error.toString()
 			if (error?.stack) {
@@ -1469,15 +1471,25 @@ class VizMSEManager extends EventEmitter {
 				return internalEl
 			}
 		} catch (e) {
+			this.emit(
+				'debug',
+				`_prepareNewElement catch ${e} stack: ${typeof e === 'object' && (e as any).stack} string: "${(
+					e as Error
+				).toString()}"`
+			)
+
 			if ((e as Error).toString().match(/already exist/i)) {
 				// "An internal/external graphics element with name 'xxxxxxxxxxxxxxx' already exists."
 				// If the object already exists, it's not an error, fetch and use the element instead
+
+				this.emit('debug', `_prepareNewElement ALREADY EXIST`)
 
 				const element = await rundown.getElement(content)
 
 				this._cacheElement(content, element)
 				return element
 			} else {
+				this.emit('debug', `_prepareNewElement throw`)
 				throw e
 			}
 		}
