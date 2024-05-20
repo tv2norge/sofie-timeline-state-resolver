@@ -74,7 +74,8 @@
 		},
 		"oauthTokenHost": {
 			"type": "string",
-			"ui:title": "OAuth Token Host"
+			"ui:title": "OAuth Token Host",
+			"ui:description": "To use Client Credentials grant, provide OAuth Token Host, Client ID, Client Secret, and Audience(optional) to exchange them for a Bearer token that will be added to every outgoing request"
 		},
 		"oauthClientId": {
 			"type": "string",
@@ -87,6 +88,11 @@
 		"oauthAudience": {
 			"type": "string",
 			"ui:title": "OAuth Audience"
+		},
+		"bearerToken": {
+			"type": "string",
+			"ui:title": "Bearer Token",
+			"ui:descrption": "Bearer token that will be added to every outgoing request"
 		}
 	},
 	"required": ["host"],
