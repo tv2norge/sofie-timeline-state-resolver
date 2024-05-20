@@ -1,0 +1,1 @@
+{"version":3,"file":"common-options.d.ts","sourceRoot":"","sources":["../../src/generated/common-options.ts"],"names":[],"mappings":"AACA;;;;GAIG;AAEH,MAAM,WAAW,mBAAmB;IACnC,KAAK,CAAC,EAAE,OAAO,CAAA;IACf,UAAU,CAAC,EAAE,OAAO,CAAA;IACpB,OAAO,CAAC,EAAE,OAAO,CAAA;IACjB,WAAW,CAAC,EAAE,MAAM,CAAA;CACpB"}

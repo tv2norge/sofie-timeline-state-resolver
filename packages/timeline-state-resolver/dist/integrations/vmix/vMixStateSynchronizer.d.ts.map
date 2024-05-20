@@ -1,0 +1,1 @@
+{"version":3,"file":"vMixStateSynchronizer.d.ts","sourceRoot":"","sources":["../../../src/integrations/vmix/vMixStateSynchronizer.ts"],"names":[],"mappings":"AAAA,OAAO,EAAa,SAAS,EAAE,iBAAiB,EAAE,MAAM,mBAAmB,CAAA;AAI3E;;GAEG;AACH,qBAAa,qBAAqB;IACjC,cAAc,CAAC,aAAa,EAAE,iBAAiB,EAAE,SAAS,EAAE,SAAS,GAAG,iBAAiB;IAczF,OAAO,CAAC,gBAAgB;CAwCxB"}

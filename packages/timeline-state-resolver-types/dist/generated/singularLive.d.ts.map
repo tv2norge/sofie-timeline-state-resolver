@@ -1,0 +1,1 @@
+{"version":3,"file":"singularLive.d.ts","sourceRoot":"","sources":["../../src/generated/singularLive.ts"],"names":[],"mappings":"AACA;;;;GAIG;AAEH,MAAM,WAAW,mBAAmB;IACnC,WAAW,EAAE,MAAM,CAAA;CACnB;AAED,MAAM,WAAW,8BAA8B;IAC9C,eAAe,EAAE,MAAM,CAAA;IACvB,WAAW,EAAE,uBAAuB,CAAC,WAAW,CAAA;CAChD;AAED,oBAAY,uBAAuB;IAClC,WAAW,gBAAgB;CAC3B;AAED,MAAM,MAAM,uBAAuB,GAAG,8BAA8B,CAAA"}

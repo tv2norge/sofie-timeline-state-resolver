@@ -1,0 +1,1 @@
+{"version":3,"file":"osc.d.ts","sourceRoot":"","sources":["../../src/generated/osc.ts"],"names":[],"mappings":"AACA;;;;GAIG;AAEH,MAAM,WAAW,UAAU;IAC1B,IAAI,EAAE,MAAM,CAAA;IACZ,IAAI,EAAE,MAAM,CAAA;IACZ,IAAI,EAAE,aAAa,CAAA;CACnB;AAED,oBAAY,aAAa;IACxB,GAAG,QAAQ;IACX,GAAG,QAAQ;CACX;AAED,MAAM,MAAM,cAAc,GAAG,MAAM,CAAC,MAAM,EAAE,KAAK,CAAC,CAAA"}
