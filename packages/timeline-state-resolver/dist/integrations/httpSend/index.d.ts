@@ -22,7 +22,7 @@ export declare class HTTPSendDevice extends EventEmitter<DeviceEvents> implement
     private sendManualCommand;
     convertTimelineStateToDeviceState(state: Timeline.TimelineState<TSRTimelineContent>): HttpSendDeviceState;
     diffStates(oldState: HttpSendDeviceState | undefined, newState: HttpSendDeviceState): Array<HttpSendDeviceCommand>;
-    sendCommand({ tlObjId, context, command }: HttpSendDeviceCommand): Promise<void>;
+    sendCommand({ tlObjId, context, command }: HttpSendDeviceCommand): Promise<unknown>;
     private getTrackedStateHash;
 }
 //# sourceMappingURL=index.d.ts.map

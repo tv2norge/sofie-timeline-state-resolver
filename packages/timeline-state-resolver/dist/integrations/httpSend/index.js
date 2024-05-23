@@ -68,7 +68,7 @@ class HTTPSendDevice extends EventEmitter {
                 response: (0, lib_1.t)('Failed to send command: params type is invalid'),
             };
         }
-        await this.sendCommand({
+        const response = await this.sendCommand({
             tlObjId: '',
             context: 'makeReady',
             command: {
@@ -79,6 +79,7 @@ class HTTPSendDevice extends EventEmitter {
         }).catch(() => this.emit('warning', 'Manual command failed: ' + JSON.stringify(cmd)));
         return {
             result: timeline_state_resolver_types_1.ActionExecutionResultCode.Ok,
+            responseData: typeof response === 'string' ? response : undefined,
         };
     }
     convertTimelineStateToDeviceState(state) {
@@ -186,6 +187,7 @@ class HTTPSendDevice extends EventEmitter {
             else {
                 this.emit('warning', `HTTPSend: ${command.content.type}: Bad statuscode response on url "${command.content.url}": ${response.statusCode} (${context})`);
             }
+            return response.body;
         }
         catch (error) {
             const err = error; // make typescript happy
@@ -217,6 +219,7 @@ class HTTPSendDevice extends EventEmitter {
                     }, timeLeft);
                 }
             }
+            return err.response?.body;
         }
     }
     getTrackedStateHash(command) {

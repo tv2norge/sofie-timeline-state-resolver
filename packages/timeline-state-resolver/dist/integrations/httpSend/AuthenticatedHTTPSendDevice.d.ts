@@ -11,6 +11,6 @@ export declare class AuthenticatedHTTPSendDevice extends HTTPSendDevice {
     private scheduleTokenRefresh;
     private refreshAccessToken;
     private makeAccessTokenRequest;
-    sendCommand({ tlObjId, context, command }: HttpSendDeviceCommand): Promise<void>;
+    sendCommand({ tlObjId, context, command }: HttpSendDeviceCommand): Promise<unknown>;
 }
 //# sourceMappingURL=AuthenticatedHTTPSendDevice.d.ts.map

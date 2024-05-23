@@ -122,10 +122,11 @@ export interface Datastore {
         modified: number;
     };
 }
-export interface ActionExecutionResult {
+export type ActionExecutionResult = {
     result: ActionExecutionResultCode;
     response?: ITranslatableMessage;
-}
+    responseData?: unknown;
+};
 export declare enum ActionExecutionResultCode {
     Error = "ERROR",
     Ok = "OK"
