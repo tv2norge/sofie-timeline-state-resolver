@@ -156,9 +156,10 @@ export interface Datastore {
 	}
 }
 
-export interface ActionExecutionResult {
+export type ActionExecutionResult = {
 	result: ActionExecutionResultCode
 	response?: ITranslatableMessage
+	responseData?: unknown
 }
 
 export enum ActionExecutionResultCode {

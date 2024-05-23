@@ -114,7 +114,7 @@ export class AuthenticatedHTTPSendDevice extends HTTPSendDevice {
 		return token
 	}
 
-	async sendCommand({ tlObjId, context, command }: HttpSendDeviceCommand): Promise<void> {
+	async sendCommand({ tlObjId, context, command }: HttpSendDeviceCommand): Promise<unknown> {
 		if (this.authOptions) {
 			const bearerToken =
 				this.authOptions.method === AuthMethod.BEARER_TOKEN ? this.authOptions.bearerToken : await this.tokenPromise
