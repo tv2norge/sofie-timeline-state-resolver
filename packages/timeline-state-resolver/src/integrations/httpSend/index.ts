@@ -97,7 +97,7 @@ export class HTTPSendDevice
 			}
 		}
 
-		await this.sendCommand({
+		const response = await this.sendCommand({
 			tlObjId: '',
 			context: 'makeReady',
 			command: {
@@ -109,6 +109,7 @@ export class HTTPSendDevice
 
 		return {
 			result: ActionExecutionResultCode.Ok,
+			responseData: typeof response === 'string' ? response : undefined,
 		}
 	}
 
@@ -167,7 +168,7 @@ export class HTTPSendDevice
 
 		return commands
 	}
-	async sendCommand({ tlObjId, context, command }: HttpSendDeviceCommand): Promise<void> {
+	async sendCommand({ tlObjId, context, command }: HttpSendDeviceCommand): Promise<unknown> {
 		const commandHash = this.getTrackedStateHash(command)
 
 		if (command.commandName === 'added' || command.commandName === 'changed') {
@@ -229,6 +230,8 @@ export class HTTPSendDevice
 					`HTTPSend: ${command.content.type}: Bad statuscode response on url "${command.content.url}": ${response.statusCode} (${context})`
 				)
 			}
+
+			return response.body
 		} catch (error) {
 			const err = error as RequestError // make typescript happy
 
@@ -266,6 +269,8 @@ export class HTTPSendDevice
 					}, timeLeft)
 				}
 			}
+
+			return err.response?.body
 		}
 	}
 	private getTrackedStateHash(command: HttpSendDeviceCommand['command']): string {
