@@ -47,6 +47,9 @@ import TricasterMappings = require('./integrations/tricaster/$schemas/mappings.j
 import HttpSendActions = require('./integrations/httpSend/$schemas/actions.json')
 import PharosActions = require('./integrations/pharos/$schemas/actions.json')
 import TcpSendActions = require('./integrations/tcpSend/$schemas/actions.json')
+import ViscaOverIPActions = require('./integrations/viscaOverIP/$schemas/actions.json')
+import ViscaOverIPOptions = require('./integrations/viscaOverIP/$schemas/options.json')
+import ViscaOverIPMappings = require('./integrations/viscaOverIP/$schemas/mappings.json')
 import VizMSEActions = require('./integrations/vizMSE/$schemas/actions.json')
 import VizMSEOptions = require('./integrations/vizMSE/$schemas/options.json')
 import VizMSEMappings = require('./integrations/vizMSE/$schemas/mappings.json')
@@ -190,6 +193,12 @@ export const manifest: TSRManifest = {
 			displayName: generateTranslation('Tricaster'),
 			configSchema: JSON.stringify(TricasterOptions),
 			mappingsSchemas: stringifyMappingSchema(TricasterMappings),
+		},
+		[DeviceType.VISCA_OVER_IP]: {
+			displayName: generateTranslation('VISCA over IP'),
+			actions: ViscaOverIPActions.actions.map(stringifyActionSchema),
+			configSchema: JSON.stringify(ViscaOverIPOptions),
+			mappingsSchemas: stringifyMappingSchema(ViscaOverIPMappings),
 		},
 		[DeviceType.VIZMSE]: {
 			displayName: generateTranslation('Viz MSE'),

@@ -43,6 +43,7 @@ export * from './obs'
 export * from './tricaster'
 export * from './telemetrics'
 export * from './multiOsc'
+export * from './viscaOverIP'
 
 export * from './device'
 export * from './mapping'
@@ -84,6 +85,7 @@ export enum DeviceType {
 	TELEMETRICS = 'TELEMETRICS',
 	TRICASTER = 'TRICASTER',
 	MULTI_OSC = 'MULTI_OSC',
+	VISCA_OVER_IP = 'VISCA_OVER_IP',
 }
 
 export type TSRTimelineKeyframe<TContent> = Timeline.TimelineKeyframe<TContent>

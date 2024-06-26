@@ -22,6 +22,7 @@ import {
 	DeviceOptionsMultiOSC,
 	TimelineDatastoreReferences,
 	DeviceOptionsHTTPSend,
+	DeviceOptionsViscaOverIP,
 } from 'timeline-state-resolver-types'
 
 import { DoOnTime } from './devices/doOnTime'
@@ -680,6 +681,7 @@ export class Conductor extends EventEmitter<ConductorEvents> {
 				)
 			case DeviceType.OSC:
 			case DeviceType.HTTPSEND:
+			case DeviceType.VISCA_OVER_IP:
 				// presumably this device is implemented in the new service handler
 				return RemoteDeviceInstance.create(
 					'../../dist/service/DeviceInstance.js',
@@ -1596,6 +1598,7 @@ export type DeviceOptionsAnyInternal =
 	| DeviceOptionsTelemetrics
 	| DeviceOptionsTriCasterInternal
 	| DeviceOptionsMultiOSC
+	| DeviceOptionsViscaOverIP
 
 function removeParentFromState(
 	o: Timeline.TimelineState<TSRTimelineContent>
