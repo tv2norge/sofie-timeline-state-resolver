@@ -11,9 +11,24 @@ import {
 	TSRTimelineContent,
 	Timeline,
 	Mapping,
+	ActionExecutionResultCode,
+	ActionExecutionResult,
+	RecallPresetPayload,
+	StorePresetPayload,
+	ResetPresetPayload,
+	StartPanTiltPayload,
+	StartZoomPayload,
+	StartFocusPayload,
+	SetFocusModePayload,
+	PanTiltDirection,
+	ZoomDirection,
+	FocusDirection,
+	FocusMode,
 } from 'timeline-state-resolver-types'
 import { DoOnTime, SendMode } from '../../devices/doOnTime'
-import { PanasonicPtzHttpInterface } from './connection'
+import { PanasonicFocusMode, PanasonicPtzHttpInterface } from './connection'
+import { PanasonicPTZActions } from 'timeline-state-resolver-types/src'
+import { t } from '../../lib'
 
 export interface DeviceOptionsPanasonicPTZInternal extends DeviceOptionsPanasonicPTZ {
 	commandReceiver?: CommandReceiver
@@ -65,6 +80,11 @@ const COMMAND_PRIORITY: Record<PanasonicPtzCommand['type'], number> = {
 	zoomSpeed: 1,
 	zoom: 2,
 	presetMem: 3,
+}
+
+const FOCUS_MODE_MAP = {
+	[FocusMode.AUTO]: PanasonicFocusMode.AUTO,
+	[FocusMode.MANUAL]: PanasonicFocusMode.MANUAL,
 }
 
 /**
@@ -165,6 +185,135 @@ export class PanasonicPtzDevice extends DeviceWithState<PanasonicPtzState, Devic
 					reject(e)
 				})
 		})
+	}
+
+	actions: Record<string, (id: PanasonicPTZActions, payload?: Record<string, any>) => Promise<ActionExecutionResult>> =
+		{
+			[PanasonicPTZActions.RecallPreset]: async (
+				_id: PanasonicPTZActions.RecallPreset,
+				payload: RecallPresetPayload
+			) => {
+				return this.safelySendActionCommand(async () => this._device?.recallPreset(payload.presetNumber))
+			},
+			[PanasonicPTZActions.StorePreset]: async (_id: PanasonicPTZActions.StorePreset, payload: StorePresetPayload) => {
+				return this.safelySendActionCommand(async () => this._device?.storePreset(payload.presetNumber))
+			},
+			[PanasonicPTZActions.ResetPreset]: async (_id: PanasonicPTZActions.ResetPreset, payload: ResetPresetPayload) => {
+				return this.safelySendActionCommand(async () => this._device?.resetPreset(payload.presetNumber))
+			},
+			[PanasonicPTZActions.StartPanTilt]: async (
+				_id: PanasonicPTZActions.StartPanTilt,
+				payload: StartPanTiltPayload
+			) => {
+				const { panSpeed, tiltSpeed } = this.mapPanTiltSpeedToPanasonic(
+					payload.panSpeed,
+					payload.tiltSpeed,
+					payload.direction
+				)
+				return this.safelySendActionCommand(async () => this._device?.setPanTiltSpeed(panSpeed, tiltSpeed))
+			},
+			[PanasonicPTZActions.StopPanTilt]: async (_id: PanasonicPTZActions.StopPanTilt) => {
+				const { panSpeed, tiltSpeed } = this.mapPanTiltSpeedToPanasonic(0, 0)
+				return this.safelySendActionCommand(async () => this._device?.setPanTiltSpeed(panSpeed, tiltSpeed))
+			},
+			[PanasonicPTZActions.StartZoom]: async (_id: PanasonicPTZActions.StartZoom, payload: StartZoomPayload) => {
+				const speed = this.mapZoomSpeedToPanasonic(payload.zoomSpeed, payload.direction)
+				return this.safelySendActionCommand(async () => this._device?.setZoomSpeed(speed))
+			},
+			[PanasonicPTZActions.StopZoom]: async (_id: PanasonicPTZActions.StopPanTilt) => {
+				const speed = this.mapZoomSpeedToPanasonic(0)
+				return this.safelySendActionCommand(async () => this._device?.setZoomSpeed(speed))
+			},
+			[PanasonicPTZActions.StartFocus]: async (_id: PanasonicPTZActions.StartFocus, payload: StartFocusPayload) => {
+				const speed = this.mapFocusSpeedToPanasonic(payload.focusSpeed, payload.direction)
+				return this.safelySendActionCommand(async () => this._device?.setFocusSpeed(speed))
+			},
+			[PanasonicPTZActions.StopFocus]: async (_id: PanasonicPTZActions.StopFocus) => {
+				const speed = this.mapFocusSpeedToPanasonic(0)
+				return this.safelySendActionCommand(async () => this._device?.setFocusSpeed(speed))
+			},
+			[PanasonicPTZActions.SetFocusMode]: async (
+				_id: PanasonicPTZActions.SetFocusMode,
+				payload: SetFocusModePayload
+			) => {
+				const mode = FOCUS_MODE_MAP[payload.mode]
+				return this.safelySendActionCommand(async () => this._device?.setFocusMode(mode))
+			},
+			[PanasonicPTZActions.TriggerOnePushFocus]: async (_id: PanasonicPTZActions.TriggerOnePushFocus) => {
+				return this.safelySendActionCommand(async () => this._device?.triggerOneTouchFocus())
+			},
+		}
+
+	private async safelySendActionCommand(
+		sendCommandFun: () => Promise<any> | undefined
+	): Promise<ActionExecutionResult> {
+		try {
+			await sendCommandFun()
+		} catch {
+			return {
+				result: ActionExecutionResultCode.Error,
+			}
+		}
+
+		return {
+			result: ActionExecutionResultCode.Ok,
+		}
+	}
+
+	private mapPanTiltSpeedToPanasonic(panSpeed: number, tiltSpeed: number, direction?: PanTiltDirection) {
+		panSpeed = Math.round((panSpeed / 100.0) * 49)
+		tiltSpeed = Math.round((tiltSpeed / 100.0) * 49)
+		if (
+			direction === PanTiltDirection.DOWN_LEFT ||
+			direction === PanTiltDirection.LEFT ||
+			direction === PanTiltDirection.UP_LEFT
+		) {
+			panSpeed *= -1
+		}
+		panSpeed += 50
+		if (
+			direction === PanTiltDirection.DOWN ||
+			direction === PanTiltDirection.DOWN_LEFT ||
+			direction === PanTiltDirection.DOWN_RIGHT
+		) {
+			tiltSpeed *= -1
+		}
+		tiltSpeed += 50
+		return {
+			panSpeed,
+			tiltSpeed,
+		}
+	}
+
+	private mapZoomSpeedToPanasonic(speed: number, direction?: ZoomDirection) {
+		speed = Math.round((speed / 100.0) * 49)
+		if (direction === ZoomDirection.WIDE) {
+			speed *= -1
+		}
+		speed += 50
+		return speed
+	}
+
+	private mapFocusSpeedToPanasonic(speed: number, direction?: FocusDirection) {
+		speed = Math.round((speed / 100.0) * 49)
+		if (direction === FocusDirection.NEAR) {
+			speed *= -1
+		}
+		speed += 50
+		return speed
+	}
+
+	async executeAction(actionId: PanasonicPTZActions, payload?: Record<string, any>): Promise<ActionExecutionResult> {
+		const actionFun = this.actions[actionId]
+
+		if (actionFun) {
+			return actionFun(actionId, payload)
+		}
+
+		return {
+			result: ActionExecutionResultCode.Error,
+			response: t('Device does not implement an action handler for this action ID'),
+		}
 	}
 
 	/**

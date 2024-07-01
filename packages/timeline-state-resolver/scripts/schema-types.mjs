@@ -37,6 +37,32 @@ try {
 	console.error(e)
 }
 
+// convert generic PTZ actions
+try {
+	const actionsDescr = JSON.parse(await fs.readFile('./src/$schemas/generic-ptz-actions.json'))
+	const actionIds = []
+	let output = ''
+	for (const action of actionsDescr.actions) {
+		actionIds.push(action.id)
+		if (!action.payload) continue
+
+		const actionTypes = await compile(action.payload, action.id + 'Payload', {
+			additionalProperties: false,
+			style: PrettierConf,
+			bannerComment: '',
+		})
+		output += '\n' + actionTypes
+	}
+
+	await fs.writeFile(
+		'../timeline-state-resolver-types/src/generated/generic-ptz-actions.ts',
+		BANNER + '\n' + output
+	)
+} catch (e) {
+	console.error('Error while generating common-options.json, continuing...')
+	console.error(e)
+}
+
 // convert common-options
 try {
 	const commonOptionsDescr = JSON.parse(await fs.readFile('./src/$schemas/common-options.json'))
@@ -78,7 +104,7 @@ const capitalise = (s) => {
 	})
 }
 
-let indexFile = BANNER + `\nexport * from './action-schema'`
+let indexFile = BANNER + `\nexport * from './action-schema'\nexport * from './generic-ptz-actions'`
 let baseMappingsTypes = []
 
 // iterate over integrations
@@ -176,7 +202,7 @@ for (const dir of dirs) {
 			const actionsDescr = JSON.parse(await fs.readFile(filePath))
 			for (const action of actionsDescr.actions) {
 				actionIds.push(action.id)
-				if (!action.payload) continue
+				if (!action.payload || action.generic) continue
 
 				const actionTypes = await compile(action.payload, action.id + 'Payload', {
 					additionalProperties: false,

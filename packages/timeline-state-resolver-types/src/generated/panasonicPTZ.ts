@@ -35,3 +35,17 @@ export enum MappingPanasonicPTZType {
 }
 
 export type SomeMappingPanasonicPTZ = MappingPanasonicPTZPresetMem | MappingPanasonicPTZPresetSpeed | MappingPanasonicPTZZoomSpeed | MappingPanasonicPTZZoom
+
+export enum PanasonicPTZActions {
+	StartPanTilt = 'startPanTilt',
+	StopPanTilt = 'stopPanTilt',
+	StartZoom = 'startZoom',
+	StopZoom = 'stopZoom',
+	StorePreset = 'storePreset',
+	RecallPreset = 'recallPreset',
+	ResetPreset = 'resetPreset',
+	StartFocus = 'startFocus',
+	StopFocus = 'stopFocus',
+	SetFocusMode = 'setFocusMode',
+	TriggerOnePushFocus = 'triggerOnePushFocus',
+}
