@@ -55,7 +55,7 @@ export class ViscaUdpSocket extends EventEmitter {
 				this._localPacketId = 0
 				this.log('reconnecting')
 				if (this._address && this._port) {
-					this.sendCommand(new ResetSequenceNumberCommand())
+					this.sendCommand(new ResetSequenceNumberCommand()).catch((reason) => this.log(reason))
 					this._connectionState = ConnectionState.Connecting
 				}
 			}, this._reconnectInterval)
@@ -71,7 +71,7 @@ export class ViscaUdpSocket extends EventEmitter {
 			this._port = port
 		}
 
-		this.sendCommand(new ResetSequenceNumberCommand())
+		this.sendCommand(new ResetSequenceNumberCommand()).catch((reason) => this.log(reason))
 		this._connectionState = ConnectionState.Connecting
 	}
 

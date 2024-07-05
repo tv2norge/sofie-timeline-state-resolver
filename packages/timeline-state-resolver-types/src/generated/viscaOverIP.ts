@@ -15,8 +15,10 @@ export type SomeMappingViscaOverIP = Record<string, never>
 export enum ViscaOverIPActions {
 	StartPanTilt = 'startPanTilt',
 	StopPanTilt = 'stopPanTilt',
+	GetPanTiltPosition = 'getPanTiltPosition',
 	StartZoom = 'startZoom',
 	StopZoom = 'stopZoom',
+	GetZoomPosition = 'getZoomPosition',
 	StorePreset = 'storePreset',
 	RecallPreset = 'recallPreset',
 	ResetPreset = 'resetPreset',
@@ -24,4 +26,6 @@ export enum ViscaOverIPActions {
 	StopFocus = 'stopFocus',
 	SetFocusMode = 'setFocusMode',
 	TriggerOnePushFocus = 'triggerOnePushFocus',
+	GetFocusPosition = 'getFocusPosition',
+	GetFocusMode = 'getFocusMode',
 }

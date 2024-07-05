@@ -37,6 +37,7 @@ exports[`index imports 1`] = `
   "OBSRequest",
   "OSCDeviceType",
   "OSCValueType",
+  "PanasonicPTZActions",
   "QuantelActions",
   "QuantelControlMode",
   "QuantelTransitionType",
@@ -75,6 +76,7 @@ exports[`index imports 1`] = `
   "VMixInputType",
   "VMixTransitionType",
   "VideoFormat",
+  "ViscaOverIPActions",
   "VizMSEActions",
   "VmixActions",
 ]
