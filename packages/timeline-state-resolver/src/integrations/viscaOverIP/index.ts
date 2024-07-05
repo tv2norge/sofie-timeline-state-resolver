@@ -3,22 +3,19 @@ import {
 	ActionExecutionResult,
 	ActionExecutionResultCode,
 	DeviceStatus,
-	FocusDirection,
 	FocusMode,
-	PanTiltDirection,
 	RecallPresetPayload,
 	ResetPresetPayload,
 	SetFocusModePayload,
-	StartFocusPayload,
-	StartPanTiltPayload,
-	StartZoomPayload,
+	SetFocusSpeedPayload,
+	SetPanTiltSpeedPayload,
+	SetZoomSpeedPayload,
 	StatusCode,
 	StorePresetPayload,
 	TSRTimelineContent,
 	Timeline,
 	ViscaOverIPActions,
 	ViscaOverIPOptions,
-	ZoomDirection,
 } from 'timeline-state-resolver-types'
 import EventEmitter = require('eventemitter3')
 
@@ -39,27 +36,6 @@ export type ViscaDeviceState = Timeline.TimelineState<TSRTimelineContent>
 
 export interface ViscaDeviceCommand extends CommandWithContext {
 	command: {}
-}
-
-const PAN_TILT_DIRECTION_MAP = {
-	[PanTiltDirection.UP]: ConnectionEnums.PanTiltDirection.Up,
-	[PanTiltDirection.UP_RIGHT]: ConnectionEnums.PanTiltDirection.UpRight,
-	[PanTiltDirection.RIGHT]: ConnectionEnums.PanTiltDirection.Right,
-	[PanTiltDirection.DOWN_RIGHT]: ConnectionEnums.PanTiltDirection.DownRight,
-	[PanTiltDirection.DOWN]: ConnectionEnums.PanTiltDirection.Down,
-	[PanTiltDirection.DOWN_LEFT]: ConnectionEnums.PanTiltDirection.DownLeft,
-	[PanTiltDirection.LEFT]: ConnectionEnums.PanTiltDirection.Left,
-	[PanTiltDirection.UP_LEFT]: ConnectionEnums.PanTiltDirection.UpLeft,
-}
-
-const ZOOM_DIRECTION_MAP = {
-	[ZoomDirection.WIDE]: ConnectionEnums.ZoomDirection.WideVariable,
-	[ZoomDirection.TELE]: ConnectionEnums.ZoomDirection.TeleVariable,
-}
-
-const FOCUS_DIRECTION_MAP = {
-	[FocusDirection.NEAR]: ConnectionEnums.FocusDirection.NearVariable,
-	[FocusDirection.FAR]: ConnectionEnums.FocusDirection.FarVariable,
 }
 
 const FOCUS_MODE_MAP = {
@@ -113,46 +89,40 @@ export class ViscaOverIpDevice
 			const presetCommand = new PresetCommand(ConnectionEnums.PresetOperation.Reset, payload.presetNumber)
 			return this.safelySendActionCommand(presetCommand)
 		},
-		[ViscaOverIPActions.StartPanTilt]: async (_id: ViscaOverIPActions.StartPanTilt, payload: StartPanTiltPayload) => {
+		[ViscaOverIPActions.SetPanTiltSpeed]: async (
+			_id: ViscaOverIPActions.SetPanTiltSpeed,
+			payload: SetPanTiltSpeedPayload
+		) => {
 			const panTiltCommand = new PanTiltDriveCommand(
-				PAN_TILT_DIRECTION_MAP[payload.direction],
+				this.mapPanTiltSpeedToViscaDirection(payload.panSpeed, payload.tiltSpeed),
 				this.mapPanTiltSpeedToVisca(payload.panSpeed),
 				this.mapPanTiltSpeedToVisca(payload.tiltSpeed)
 			)
-			return this.safelySendActionCommand(panTiltCommand)
-		},
-		[ViscaOverIPActions.StopPanTilt]: async (_id: ViscaOverIPActions.StopPanTilt) => {
-			const panTiltCommand = new PanTiltDriveCommand(ConnectionEnums.PanTiltDirection.Stop)
 			return this.safelySendActionCommand(panTiltCommand)
 		},
 		[ViscaOverIPActions.GetPanTiltPosition]: async (_id: ViscaOverIPActions.GetPanTiltPosition) => {
 			const panTiltInquiryCommand = new PanTiltPositionInquiryCommand()
 			return this.safelySendActionCommand(panTiltInquiryCommand)
 		},
-		[ViscaOverIPActions.StartZoom]: async (_id: ViscaOverIPActions.StartZoom, payload: StartZoomPayload) => {
+		[ViscaOverIPActions.SetZoomSpeed]: async (_id: ViscaOverIPActions.SetZoomSpeed, payload: SetZoomSpeedPayload) => {
 			const zoomCommand = new ZoomCommand(
-				ZOOM_DIRECTION_MAP[payload.direction],
+				this.mapZoomSpeedToViscaDirection(payload.zoomSpeed),
 				this.mapZoomSpeedToVisca(payload.zoomSpeed)
 			)
-			return this.safelySendActionCommand(zoomCommand)
-		},
-		[ViscaOverIPActions.StopZoom]: async (_id: ViscaOverIPActions.StopPanTilt) => {
-			const zoomCommand = new ZoomCommand(ConnectionEnums.ZoomDirection.Stop)
 			return this.safelySendActionCommand(zoomCommand)
 		},
 		[ViscaOverIPActions.GetZoomPosition]: async (_id: ViscaOverIPActions.GetZoomPosition) => {
 			const zoomInquiryCommand = new ZoomPositionInquiryCommand()
 			return this.safelySendActionCommand(zoomInquiryCommand)
 		},
-		[ViscaOverIPActions.StartFocus]: async (_id: ViscaOverIPActions.StartFocus, payload: StartFocusPayload) => {
+		[ViscaOverIPActions.SetFocusSpeed]: async (
+			_id: ViscaOverIPActions.SetFocusSpeed,
+			payload: SetFocusSpeedPayload
+		) => {
 			const focusCommand = new FocusCommand(
-				FOCUS_DIRECTION_MAP[payload.direction],
+				this.mapFocusSpeedToViscaDirection(payload.focusSpeed),
 				this.mapFocusSpeedToVisca(payload.focusSpeed)
 			)
-			return this.safelySendActionCommand(focusCommand)
-		},
-		[ViscaOverIPActions.StopFocus]: async (_id: ViscaOverIPActions.StopFocus) => {
-			const focusCommand = new FocusCommand(ConnectionEnums.FocusDirection.Stop)
 			return this.safelySendActionCommand(focusCommand)
 		},
 		[ViscaOverIPActions.SetFocusMode]: async (_id: ViscaOverIPActions.SetFocusMode, payload: SetFocusModePayload) => {
@@ -189,16 +159,75 @@ export class ViscaOverIpDevice
 		}
 	}
 
-	private mapPanTiltSpeedToVisca(speed: number) {
-		return Math.round((speed / 100.0) * 24)
+	private mapPanTiltSpeedToVisca(panTiltSpeed: number) {
+		return Math.round(Math.abs(panTiltSpeed) * 24)
 	}
 
-	private mapZoomSpeedToVisca(speed: number) {
-		return Math.round((speed / 100.0) * 7)
+	private mapPanTiltSpeedToViscaDirection(panSpeed: number, tiltSpeed: number) {
+		let horizontalDirection: 'left' | 'right' | undefined
+		let verticalDirection: 'up' | 'down' | undefined
+
+		if (panSpeed < 0) {
+			horizontalDirection = 'left'
+		} else if (panSpeed > 0) {
+			horizontalDirection = 'right'
+		}
+
+		if (tiltSpeed < 0) {
+			verticalDirection = 'down'
+		} else if (tiltSpeed > 0) {
+			verticalDirection = 'up'
+		}
+
+		switch (horizontalDirection) {
+			case 'left':
+				switch (verticalDirection) {
+					case 'up':
+						return ConnectionEnums.PanTiltDirection.UpLeft
+					case 'down':
+						return ConnectionEnums.PanTiltDirection.DownLeft
+					default:
+						return ConnectionEnums.PanTiltDirection.Left
+				}
+			case 'right':
+				switch (verticalDirection) {
+					case 'up':
+						return ConnectionEnums.PanTiltDirection.UpRight
+					case 'down':
+						return ConnectionEnums.PanTiltDirection.DownRight
+					default:
+						return ConnectionEnums.PanTiltDirection.Right
+				}
+			default:
+				switch (verticalDirection) {
+					case 'up':
+						return ConnectionEnums.PanTiltDirection.Up
+					case 'down':
+						return ConnectionEnums.PanTiltDirection.Down
+					default:
+						return ConnectionEnums.PanTiltDirection.Stop
+				}
+		}
 	}
 
-	private mapFocusSpeedToVisca(speed: number) {
-		return Math.round((speed / 100.0) * 7)
+	private mapZoomSpeedToVisca(zoomSpeed: number) {
+		return Math.round(Math.abs(zoomSpeed) * 7)
+	}
+
+	private mapZoomSpeedToViscaDirection(zoomSpeed: number) {
+		if (zoomSpeed > 0) return ConnectionEnums.ZoomDirection.TeleVariable
+		if (zoomSpeed < 0) return ConnectionEnums.ZoomDirection.WideVariable
+		return ConnectionEnums.ZoomDirection.Stop
+	}
+
+	private mapFocusSpeedToVisca(focusSpeed: number) {
+		return Math.round(Math.abs(focusSpeed) * 7)
+	}
+
+	private mapFocusSpeedToViscaDirection(focusSpeed: number) {
+		if (focusSpeed > 0) return ConnectionEnums.FocusDirection.FarVariable
+		if (focusSpeed < 0) return ConnectionEnums.FocusDirection.NearVariable
+		return ConnectionEnums.FocusDirection.Stop
 	}
 
 	convertTimelineStateToDeviceState(state: Timeline.TimelineState<TSRTimelineContent>): ViscaDeviceState {

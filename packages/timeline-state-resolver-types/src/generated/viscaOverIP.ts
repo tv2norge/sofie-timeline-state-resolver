@@ -13,17 +13,14 @@ export interface ViscaOverIPOptions {
 export type SomeMappingViscaOverIP = Record<string, never>
 
 export enum ViscaOverIPActions {
-	StartPanTilt = 'startPanTilt',
-	StopPanTilt = 'stopPanTilt',
+	SetPanTiltSpeed = 'setPanTiltSpeed',
 	GetPanTiltPosition = 'getPanTiltPosition',
-	StartZoom = 'startZoom',
-	StopZoom = 'stopZoom',
+	SetZoomSpeed = 'setZoomSpeed',
 	GetZoomPosition = 'getZoomPosition',
 	StorePreset = 'storePreset',
 	RecallPreset = 'recallPreset',
 	ResetPreset = 'resetPreset',
-	StartFocus = 'startFocus',
-	StopFocus = 'stopFocus',
+	SetFocusSpeed = 'setFocusSpeed',
 	SetFocusMode = 'setFocusMode',
 	TriggerOnePushFocus = 'triggerOnePushFocus',
 	GetFocusPosition = 'getFocusPosition',
