@@ -21,10 +21,10 @@ import {
 	SetPanTiltSpeedPayload,
 	SetZoomSpeedPayload,
 	SetFocusSpeedPayload,
+	PanasonicPTZActions,
 } from 'timeline-state-resolver-types'
 import { DoOnTime, SendMode } from '../../devices/doOnTime'
 import { PanasonicFocusMode, PanasonicPtzHttpInterface } from './connection'
-import { PanasonicPTZActions } from 'timeline-state-resolver-types/src'
 import { t } from '../../lib'
 import {
 	AutoFocusOnOffControl,
