@@ -21,20 +21,13 @@ export type ConnectionEvents = {
 	error: [error: Error]
 }
 
-/**
- * This TSR integration polls the state of vMix and merges that into our last-known state.
- * However, not all state properties can be retried from vMix's API.
- * Therefore, there are some properties that we must "carry over" from our last-known state, every time.
- * These are those property keys for the Input state objects.
- */
-export type InferredPartialInputStateKeys = 'filePath' | 'fade' | 'audioAuto' | 'restart'
-
 interface SentCommandArgs {
 	input?: string | number
 	value?: string | number
 	extra?: string
 	duration?: number
 	mix?: number
+	selectedName?: string
 }
 
 export class VMixConnection extends EventEmitter<ConnectionEvents> {
@@ -76,9 +69,10 @@ export class VMixConnection extends EventEmitter<ConnectionEvents> {
 		const val = args.value !== undefined ? `&Value=${args.value}` : ''
 		const dur = args.duration !== undefined ? `&Duration=${args.duration}` : ''
 		const mix = args.mix !== undefined ? `&Mix=${args.mix}` : ''
+		const selectedName = args.selectedName !== undefined ? `&SelectedName=${args.selectedName}` : ''
 		const ext = args.extra !== undefined ? args.extra : ''
 
-		const queryString = `${inp}${val}${dur}${mix}${ext}`.slice(1) // remove the first &
+		const queryString = `${inp}${val}${dur}${mix}${ext}${selectedName}`.slice(1) // remove the first &
 		let command = `FUNCTION ${func}`
 
 		if (queryString) {
@@ -264,6 +258,8 @@ export class VMixCommandSender {
 				return this.browserNavigate(command.input, command.value)
 			case VMixCommand.SELECT_INDEX:
 				return this.selectIndex(command.input, command.value)
+			case VMixCommand.SET_TEXT:
+				return this.setText(command.input, command.value, command.fieldName)
 			default:
 				throw new Error(`vmixAPI: Command ${((command || {}) as any).command} not implemented`)
 		}
@@ -477,6 +473,10 @@ export class VMixCommandSender {
 
 	public async selectIndex(input: string | number, value: number): Promise<any> {
 		return this.sendCommandFunction(`SelectIndex`, { input, value })
+	}
+
+	public async setText(input: string | number, value: string, fieldName: string): Promise<any> {
+		return this.sendCommandFunction(`SetText`, { input, value, selectedName: fieldName })
 	}
 
 	private async sendCommandFunction(func: string, args: SentCommandArgs) {

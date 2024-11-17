@@ -6,6 +6,7 @@ import {
 	VMixTransition,
 	VMixTransitionType,
 	VMixLayer,
+	VMixText,
 } from 'timeline-state-resolver-types'
 import { CommandContext, VMixStateCommandWithContext } from './vMixCommands'
 import _ = require('underscore')
@@ -80,6 +81,7 @@ export interface VMixInput {
 	restart?: boolean
 	url?: string
 	index?: number
+	text?: VMixText
 }
 
 export interface VMixInputAudio {
@@ -596,6 +598,22 @@ export class VMixStateDiffer {
 				context: CommandContext.None,
 				timelineId: '',
 			})
+		}
+		if (input.text !== undefined) {
+			for (const [fieldName, value] of Object.entries<string>(input.text)) {
+				if (oldInput?.text?.[fieldName] !== value) {
+					commands.push({
+						command: {
+							command: VMixCommand.SET_TEXT,
+							input: key,
+							value,
+							fieldName,
+						},
+						context: CommandContext.None,
+						timelineId: '',
+					})
+				}
+			}
 		}
 		return { preTransitionCommands, postTransitionCommands }
 	}
