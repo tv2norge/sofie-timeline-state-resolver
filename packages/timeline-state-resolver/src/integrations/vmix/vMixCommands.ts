@@ -208,10 +208,16 @@ export interface VMixStateCommandBrowserNavigate extends VMixStateCommandBase {
 	input: string | number
 	value: string
 }
-export interface VMixStateCommanSelectIndex extends VMixStateCommandBase {
+export interface VMixStateCommandSelectIndex extends VMixStateCommandBase {
 	command: VMixCommand.SELECT_INDEX
 	input: string | number
 	value: number
+}
+export interface VMixStateCommandSetText extends VMixStateCommandBase {
+	command: VMixCommand.SET_TEXT
+	input: string | number
+	fieldName: string
+	value: string
 }
 export type VMixStateCommand =
 	| VMixStateCommandPreviewInput
@@ -259,7 +265,8 @@ export type VMixStateCommand =
 	| VMixStateCommandListRemoveAll
 	| VMixStateCommandRestart
 	| VMixStateCommandBrowserNavigate
-	| VMixStateCommanSelectIndex
+	| VMixStateCommandSelectIndex
+	| VMixStateCommandSetText
 
 export enum CommandContext {
 	None = 'none',
