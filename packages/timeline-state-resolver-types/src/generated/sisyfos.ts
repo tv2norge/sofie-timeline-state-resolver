@@ -33,6 +33,14 @@ export enum MappingSisyfosType {
 
 export type SomeMappingSisyfos = MappingSisyfosChannel | MappingSisyfosChannelByLabel | MappingSisyfosChannels
 
+export interface LoadMixerPresetPayload {
+	/**
+	 * The name of the preset to load
+	 */
+	name: string
+}
+
 export enum SisyfosActions {
 	Reinit = 'reinit',
+	LoadMixerPreset = 'loadMixerPreset',
 }
