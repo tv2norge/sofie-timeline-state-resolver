@@ -319,6 +319,7 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 			channel: number
 			isLookahead: boolean
 			tlObjId: string
+			triggerValue?: string
 		} & SisyfosChannelOptions)[] = []
 
 		_.each(state.layers, (tlObject, layerName) => {
@@ -332,8 +333,12 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 				deviceState.resync = deviceState.resync || content.resync
 			}
 
-			// Allow retrigger without valid channel mapping
-			if ('triggerValue' in content && content.triggerValue !== undefined) {
+			// Allow global retrigger without valid channel mapping
+			if (
+				'triggerValue' in content &&
+				content.triggerValue !== undefined &&
+				content.type === TimelineContentTypeSisyfos.TRIGGERVALUE
+			) {
 				deviceState.triggerValue = content.triggerValue
 			}
 
@@ -364,6 +369,7 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 						overridePriority: content.overridePriority || 0,
 						isLookahead: layer.isLookahead || false,
 						tlObjId: layer.id,
+						triggerValue: content.triggerValue,
 					})
 					deviceState.resync = deviceState.resync || content.resync || false
 				} else if (
@@ -380,6 +386,7 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 						overridePriority: content.overridePriority || 0,
 						isLookahead: layer.isLookahead || false,
 						tlObjId: layer.id,
+						triggerValue: content.triggerValue,
 					})
 					deviceState.resync = deviceState.resync || content.resync || false
 				} else if (
@@ -395,6 +402,7 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 								overridePriority: content.overridePriority || 0,
 								isLookahead: layer.isLookahead || false,
 								tlObjId: layer.id,
+								triggerValue: content.triggerValue,
 							})
 						} else if (
 							referencedMapping &&
@@ -410,6 +418,7 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 								overridePriority: content.overridePriority || 0,
 								isLookahead: layer.isLookahead || false,
 								tlObjId: layer.id,
+								triggerValue: content.triggerValue,
 							})
 						}
 					})
@@ -439,6 +448,7 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 				if (newChannel.label !== undefined && newChannel.label !== '') channel.label = newChannel.label
 				if (newChannel.visible !== undefined) channel.visible = newChannel.visible
 				if (newChannel.fadeTime !== undefined) channel.fadeTime = newChannel.fadeTime
+				if (newChannel.triggerValue !== undefined) channel.triggerValue = newChannel.triggerValue
 
 				channel.tlObjIds.push(newChannel.tlObjId)
 			}
@@ -493,6 +503,21 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 			if (newOscSendState.triggerValue && newOscSendState.triggerValue !== oldOscSendState.triggerValue) {
 				// || (!oldChannel && Number(index) >= 0)) {
 				// push commands for everything
+				debug('reset channel ' + index)
+				commands.push({
+					context: `Channel ${index} reset`,
+					content: {
+						type: SisyfosCommandType.SET_CHANNEL,
+						channel: Number(index),
+						values: newChannel,
+					},
+					timelineObjId: newChannel.tlObjIds[0] || '',
+				})
+				return
+			}
+
+			if (newChannel.triggerValue && oldChannel?.triggerValue !== newChannel.triggerValue) {
+				// note - should we only do this if we have an oldchannel?
 				debug('reset channel ' + index)
 				commands.push({
 					context: `Channel ${index} reset`,
