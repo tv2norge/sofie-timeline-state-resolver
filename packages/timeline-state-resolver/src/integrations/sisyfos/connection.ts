@@ -418,6 +418,7 @@ export type SisyfosCommand =
 
 export interface SisyfosChannel extends SisyfosAPIChannel {
 	tlObjIds: string[]
+	triggerValue?: string
 }
 export interface SisyfosState {
 	channels: { [index: string]: SisyfosChannel }
