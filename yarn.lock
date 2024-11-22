@@ -9673,7 +9673,7 @@ asn1@evs-broadcast/node-asn1:
   dependencies:
     chokidar: ^3.5.3
     fast-clone: ^1.5.13
-    timeline-state-resolver: 9.0.1-tv2norge.0
+    timeline-state-resolver: 9.0.2-tv2norge.0
     tslib: ^2.5.1
     underscore: ^1.13.6
   languageName: unknown
@@ -11156,7 +11156,7 @@ asn1@evs-broadcast/node-asn1:
   languageName: unknown
   linkType: soft
 
-"timeline-state-resolver-types@9.0.1-tv2norge.0, timeline-state-resolver-types@workspace:packages/timeline-state-resolver-types":
+"timeline-state-resolver-types@9.0.2-tv2norge.0, timeline-state-resolver-types@workspace:packages/timeline-state-resolver-types":
   version: 0.0.0-use.local
   resolution: "timeline-state-resolver-types@workspace:packages/timeline-state-resolver-types"
   dependencies:
@@ -11164,7 +11164,7 @@ asn1@evs-broadcast/node-asn1:
   languageName: unknown
   linkType: soft
 
-"timeline-state-resolver@9.0.1-tv2norge.0, timeline-state-resolver@workspace:packages/timeline-state-resolver":
+"timeline-state-resolver@9.0.2-tv2norge.0, timeline-state-resolver@workspace:packages/timeline-state-resolver":
   version: 0.0.0-use.local
   resolution: "timeline-state-resolver@workspace:packages/timeline-state-resolver"
   dependencies:
@@ -11195,7 +11195,7 @@ asn1@evs-broadcast/node-asn1:
     sprintf-js: ^1.1.2
     superfly-timeline: ^8.3.1
     threadedclass: ^1.2.1
-    timeline-state-resolver-types: 9.0.1-tv2norge.0
+    timeline-state-resolver-types: 9.0.2-tv2norge.0
     tslib: ^2.5.1
     tv-automation-quantel-gateway-client: ^3.1.7
     underscore: ^1.13.6
@@ -12216,8 +12216,8 @@ asn1@evs-broadcast/node-asn1:
   linkType: hard
 
 "ws@npm:^7.2.0, ws@npm:^7.4.6, ws@npm:^7.5.9":
-  version: 7.5.9
-  resolution: "ws@npm:7.5.9"
+  version: 7.5.10
+  resolution: "ws@npm:7.5.10"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ^5.0.2
@@ -12226,7 +12226,7 @@ asn1@evs-broadcast/node-asn1:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: c3c100a181b731f40b7f2fddf004aa023f79d64f489706a28bc23ff88e87f6a64b3c6651fbec3a84a53960b75159574d7a7385709847a62ddb7ad6af76f49138
+  checksum: f9bb062abf54cc8f02d94ca86dcd349c3945d63851f5d07a3a61c2fcb755b15a88e943a63cf580cbdb5b74436d67ef6b67f745b8f7c0814e411379138e1863cb
   languageName: node
   linkType: hard
 
