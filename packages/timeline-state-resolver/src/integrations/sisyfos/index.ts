@@ -31,7 +31,7 @@ import {
 	ValuesCommand,
 } from './connection'
 import Debug from 'debug'
-import { startTrace, endTrace, actionNotFoundMessage } from '../../lib'
+import { startTrace, endTrace, actionNotFoundMessage, t } from '../../lib'
 const debug = Debug('timeline-state-resolver:sisyfos')
 
 export interface DeviceOptionsSisyfosInternal extends DeviceOptionsSisyfos {
@@ -217,7 +217,7 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 
 	async executeAction(
 		actionId: SisyfosActions,
-		_payload?: Record<string, any> | undefined
+		payload?: Record<string, any> | undefined
 	): Promise<ActionExecutionResult> {
 		switch (actionId) {
 			case SisyfosActions.Reinit:
@@ -228,6 +228,11 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 					.catch(() => ({
 						result: ActionExecutionResultCode.Error,
 					}))
+			case SisyfosActions.LoadMixerPreset:
+				if (!payload?.name) {
+					return { result: ActionExecutionResultCode.Error, response: t('Missing name') }
+				}
+				return this._handleLoadMixerPreset(payload.name)
 			default:
 				return actionNotFoundMessage(actionId)
 		}
@@ -631,5 +636,19 @@ export class SisyfosMessageDevice extends DeviceWithState<SisyfosState, DeviceOp
 	}
 	private _connectionChanged() {
 		this.emit('connectionChanged', this.getStatus())
+	}
+
+	private _handleLoadMixerPreset(presetName: string): ActionExecutionResult {
+		if (!this._sisyfos.connected || !this._sisyfos.mixerOnline)
+			return {
+				result: ActionExecutionResultCode.Error,
+			}
+		this._sisyfos.send({
+			type: SisyfosCommandType.LOAD_MIXER_PRESET,
+			presetName,
+		})
+		return {
+			result: ActionExecutionResultCode.Ok,
+		}
 	}
 }

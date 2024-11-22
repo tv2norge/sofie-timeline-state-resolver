@@ -6,6 +6,23 @@
 			"name": "Reinitialize",
 			"destructive": false,
 			"timeout": 5000
+		},
+		{
+			"id": "loadMixerPreset",
+			"name": "Load Mixer Preset",
+			"destructive": false,
+			"timeout": 5000,
+			"payload": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "The name of the preset to load",
+						"type": "string"
+					}
+				},
+				"required": ["name"],
+				"additionalProperties": false
+			}
 		}
 	]
 }
