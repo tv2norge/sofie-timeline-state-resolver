@@ -125,4 +125,6 @@ export enum VmixActions {
 	LastPreset = 'lastPreset',
 	OpenPreset = 'openPreset',
 	SavePreset = 'savePreset',
+	StartExternal = 'StartExternal',
+	StopExternal = 'StopExternal',
 }
