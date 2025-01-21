@@ -260,6 +260,8 @@ export class VMixCommandSender {
 				return this.selectIndex(command.input, command.value)
 			case VMixCommand.SET_TEXT:
 				return this.setText(command.input, command.value, command.fieldName)
+			case VMixCommand.SET_IMAGE:
+				return this.setImage(command.input, command.value, command.fieldName)
 			default:
 				throw new Error(`vmixAPI: Command ${((command || {}) as any).command} not implemented`)
 		}
@@ -477,6 +479,10 @@ export class VMixCommandSender {
 
 	public async setText(input: string | number, value: string, fieldName: string): Promise<any> {
 		return this.sendCommandFunction(`SetText`, { input, value, selectedName: fieldName })
+	}
+
+	public async setImage(input: string | number, value: string, fieldName: string): Promise<any> {
+		return this.sendCommandFunction(`SetImage`, { input, value: encodeURIComponent(value), selectedName: fieldName })
 	}
 
 	private async sendCommandFunction(func: string, args: SentCommandArgs) {
