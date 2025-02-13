@@ -429,11 +429,11 @@ export interface SisyfosState {
 // ------------------------------------------------------
 // Interfaces for the data that comes over OSC:
 export interface SisyfosAPIChannel {
-	faderLevel: number
-	pgmOn: number
-	pstOn: number
+	faderLevel: number | undefined
+	pgmOn: number | undefined
+	pstOn: number | undefined
 	label: string
-	visible: boolean
+	visible: boolean | undefined
 	fadeTime?: number
 }
 
