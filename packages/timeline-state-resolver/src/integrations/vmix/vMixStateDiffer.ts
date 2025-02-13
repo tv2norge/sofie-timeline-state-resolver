@@ -8,6 +8,7 @@ import {
 	VMixLayer,
 	VMixText,
 	VMixImages,
+	MappingVmixAudioBus,
 } from 'timeline-state-resolver-types'
 import { CommandContext, VMixStateCommandWithContext } from './vMixCommands'
 import _ = require('underscore')
@@ -856,6 +857,7 @@ export class VMixStateDiffer implements VMixDefaultStateFactory {
 	): Array<VMixStateCommandWithContext> {
 		const commands: Array<VMixStateCommandWithContext> = []
 		for (const [index, bus] of Object.entries<VMixAudioBusBase | undefined>(newVMixState.audioBuses)) {
+			const busName = index as MappingVmixAudioBus['index']
 			if (!bus) continue
 			const oldBus = oldVMixState.audioBuses[index as keyof VMixAudioBusesState]
 			// probably makes sense to do this before updating volume:
@@ -863,7 +865,7 @@ export class VMixStateDiffer implements VMixDefaultStateFactory {
 				commands.push({
 					command: {
 						command: VMixCommand.BUS_AUDIO_OFF,
-						bus: index,
+						bus: busName,
 					},
 					context: CommandContext.None,
 					timelineId: '',
@@ -873,7 +875,7 @@ export class VMixStateDiffer implements VMixDefaultStateFactory {
 				commands.push({
 					command: {
 						command: VMixCommand.BUS_VOLUME,
-						bus: index,
+						bus: busName,
 						value: bus.volume,
 					},
 					context: CommandContext.None,
@@ -885,7 +887,7 @@ export class VMixStateDiffer implements VMixDefaultStateFactory {
 				commands.push({
 					command: {
 						command: VMixCommand.BUS_AUDIO_ON,
-						bus: index,
+						bus: busName,
 					},
 					context: CommandContext.None,
 					timelineId: '',
